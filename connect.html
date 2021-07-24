@@ -8,6 +8,8 @@
 <a onclick="binanceChain()">BinanceChain</a><br/>
 <a onclick="stakeBinanceChain()">Stake BinanceChain</a>
 <h5>Account BinanceChain: <span id="showBinanceChain"></span></h5>
+<a onclick="apibalaBNB()">check balance BNB</a>
+<h5>Money: <span id="money"> </span></h5>
 <a onclick="metaMask()">MetaMask</a>
 <h5>Account MetaMask: <span id="showMetaMask"></span></h5>
 
@@ -15,11 +17,11 @@
 </body>
 <script>
     let account = '';
+    // connect BNB
     function binanceChain() {
         BinanceChain.request({ method: "eth_accounts" })
             .then(respose => {
                 account = respose[0];
-                console.log(respose)
             })
             .catch(err => {
                 consollog('code' + err.code);
@@ -31,7 +33,55 @@
     }
 
 
+    // transfer money BNB
+    function stakeBinanceChain() {
+        BinanceChain.request({
+            method: 'eth_sendTransaction',
+            params: [
+                {
+                    from: account,
+                    to: '0xeF83510c47D48E2b707d4cF4982013336B96C78a',
+                    gas: '0x76c0',
+                    //phí giao dich
+                    gasPrice: 100000000000000,//'0x0099e72a000'
 
+                    value: 1000, // 2441406250 '0x00'2841269841269841400
+                    data: '0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675'
+                }
+            ]
+        })
+            .then((result) => {
+
+                // console.log(3397000000000000*price)
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    // check balance BNB
+    function apibalaBNB() {
+        // account = "0xc1A9795Bd39f7e8fd0731A1C22A604D9ff8b47B3";
+        const url = "https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=0x15C1697dbE9FAe40BB15586FAb3BC6946308969F&address="+account+"&tag=latest&apikey=RTXBGYQNBEVA184DA6XQJ1RJP7DF7A7YNG";
+        console.log(url);
+        fetch(url)
+            .then(res => {
+                return res.json()
+
+            })
+            .then(data => {
+                let money = data.result;
+                // 18 số 0 dư
+                const x = parseFloat(money) /1000000000000000000;
+                // chuyễn số thành chuỗi có 2 số thập phân
+                const v = x.toFixed(2);
+                document.getElementById('money').innerText = v+"$";
+
+            })
+    }
+
+
+    // connect metaMask
     function metaMask() {
         ethereum.request({ method: 'eth_requestAccounts' })
             .then(respose => {
@@ -50,30 +100,7 @@
         });
     }
 
-    function stakeBinanceChain() {
-        BinanceChain.request({
-                method: 'eth_sendTransaction',
-                params: [
-                    {
-                        from: account,
-                        to: '0xeF83510c47D48E2b707d4cF4982013336B96C78a',
-                        gas: '0x76c0',
-                        //phí giao dich
-                        gasPrice: 100000000000000,//'0x0099e72a000'
 
-                        value: 1000, // 2441406250 '0x00'2841269841269841400
-                        data: '0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675'
-                    }
-                ]
-            })
-            .then((result) => {
-                console.log(result)
-                // console.log(3397000000000000*price)
-            })
-            .catch((error) => {
-                console.log(error)
-            });
-    }
 
 
 </script>
